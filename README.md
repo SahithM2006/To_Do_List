@@ -37,153 +37,149 @@ Upload to GitHub Pages for free hosting.
 
 ## PROGRAM
 ```
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Interactive To-Do App</title>
+<title>Dashboard To-Do App</title>
 
 <style>
 
 body
 {
-    font-family: Arial;
-    background:#f4f6fb;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    transition:0.3s;
+margin:0;
+font-family:Segoe UI;
+background:linear-gradient(270deg,#667eea,#764ba2,#6dd5ed,#2193b0);
+background-size:600% 600%;
+animation:bg 15s ease infinite;
+height:100vh;
+display:flex;
+color:white;
 }
 
-.dark
+@keyframes bg
 {
-    background:#1e1e2f;
-    color:white;
+0%{background-position:0% 50%}
+50%{background-position:100% 50%}
+100%{background-position:0% 50%}
 }
 
-.container
+.sidebar
 {
-    width:500px;
-    background:white;
-    padding:25px;
-    border-radius:10px;
-    box-shadow:0 10px 20px rgba(0,0,0,0.2);
+width:220px;
+background:rgba(0,0,0,0.4);
+backdrop-filter:blur(10px);
+padding:20px;
+display:flex;
+flex-direction:column;
 }
 
-.dark .container
+.sidebar h2
 {
-    background:#2a2a40;
+margin-bottom:20px;
 }
 
-h1
+.sidebar button
 {
-    text-align:center;
+margin-bottom:10px;
+padding:8px;
+border:none;
+background:#ffffff22;
+color:white;
+cursor:pointer;
+border-radius:6px;
 }
 
-.input-section
+.sidebar button:hover
 {
-    display:flex;
-    gap:8px;
-    margin-bottom:10px;
+background:#ffffff55;
 }
 
-input,select
+.main
 {
-    padding:8px;
-    border-radius:5px;
-    border:1px solid #ccc;
+flex:1;
+padding:25px;
+overflow:auto;
+}
+
+.header
+{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+input
+{
+padding:8px;
+border-radius:6px;
+border:none;
+}
+
+.task-input
+{
+display:flex;
+gap:10px;
+margin-bottom:20px;
 }
 
 button
 {
-    padding:8px 12px;
-    border:none;
-    background:#4a6cf7;
-    color:white;
-    border-radius:5px;
-    cursor:pointer;
+padding:8px 12px;
+border:none;
+background:#00c6ff;
+color:white;
+border-radius:6px;
+cursor:pointer;
 }
 
-button:hover
+.task-board
 {
-    opacity:0.8;
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+gap:15px;
 }
 
-.filters
+.task
 {
-    margin:10px 0;
-    display:flex;
-    gap:10px;
+background:rgba(255,255,255,0.2);
+padding:12px;
+border-radius:10px;
+transition:0.3s;
 }
 
-ul
+.task:hover
 {
-    list-style:none;
-    padding:0;
-}
-
-li
-{
-    background:#f1f1f1;
-    padding:10px;
-    margin-bottom:8px;
-    border-radius:6px;
-    transition:0.3s;
-}
-
-li:hover
-{
-    transform:scale(1.02);
+transform:scale(1.05);
 }
 
 .completed
 {
-    text-decoration:line-through;
-    color:gray;
+text-decoration:line-through;
+opacity:0.6;
 }
 
 .progress
 {
-    width:100%;
-    background:#ddd;
-    height:8px;
-    border-radius:5px;
-    margin-top:10px;
+margin-top:20px;
+background:#ffffff33;
+height:10px;
+border-radius:10px;
 }
 
-.progress-bar
+.bar
 {
-    height:8px;
-    width:0%;
-    background:#4a6cf7;
-    border-radius:5px;
+height:10px;
+width:0%;
+background:#00ff9d;
+border-radius:10px;
 }
 
-.priority-high
+.dark
 {
-    border-left:5px solid red;
-}
-
-.priority-medium
-{
-    border-left:5px solid orange;
-}
-
-.priority-low
-{
-    border-left:5px solid green;
-}
-
-.task-buttons button
-{
-    font-size:12px;
-    margin-right:5px;
-}
-
-.toggle
-{
-    float:right;
+background:#111;
 }
 
 </style>
@@ -191,120 +187,126 @@ li:hover
 
 <body>
 
-<div class="container">
+<div class="sidebar">
 
-<h1>Interactive To-Do List</h1>
+<h2>⚡ Tasks</h2>
 
-<button class="toggle" onclick="toggleTheme()">🌙</button>
+<button onclick="filterTasks('all')">All Tasks</button>
+<button onclick="filterTasks('done')">Completed</button>
+<button onclick="filterTasks('todo')">Pending</button>
+<button onclick="clearTasks()">Clear All</button>
 
-<div class="input-section">
-<input type="text" id="taskInput" placeholder="Enter task">
-<select id="priority">
-<option value="low">Low</option>
-<option value="medium">Medium</option>
-<option value="high">High</option>
-</select>
-<input type="date" id="date">
-<button onclick="addTask()">Add</button>
 </div>
 
-<div class="filters">
-<button onclick="filterTasks('all')">All</button>
-<button onclick="filterTasks('completed')">Completed</button>
-<button onclick="filterTasks('pending')">Pending</button>
+<div class="main">
+
+<div class="header">
+<h1>My Dashboard</h1>
+<button onclick="toggleTheme()">🌙</button>
 </div>
 
-<ul id="taskList"></ul>
+<div class="task-input">
+<input id="taskInput" placeholder="Enter a new task...">
+<button onclick="addTask()">Add Task</button>
+</div>
+
+<input id="search" placeholder="Search tasks..." onkeyup="searchTask()">
+
+<div class="task-board" id="taskBoard"></div>
 
 <div class="progress">
-<div class="progress-bar" id="progressBar"></div>
+<div class="bar" id="progressBar"></div>
 </div>
 
 </div>
 
 <script>
 
-let taskList=document.getElementById("taskList")
+let board=document.getElementById("taskBoard")
 
 function addTask()
 {
 let text=document.getElementById("taskInput").value
-let priority=document.getElementById("priority").value
-let date=document.getElementById("date").value
+if(text==="") return
 
-if(text==="")
-{
-alert("Enter a task")
-return
-}
+let div=document.createElement("div")
+div.className="task"
 
-let li=document.createElement("li")
-li.classList.add("priority-"+priority)
-
-li.innerHTML=`
-<span onclick="toggleTask(this)">${text}</span>
-<div>Due: ${date}</div>
-<div class="task-buttons">
+div.innerHTML=`
+<p onclick="toggleTask(this)">${text}</p>
 <button onclick="editTask(this)">Edit</button>
 <button onclick="deleteTask(this)">Delete</button>
-</div>
 `
 
-taskList.appendChild(li)
+board.appendChild(div)
 
 document.getElementById("taskInput").value=""
 
+saveTasks()
 updateProgress()
 }
 
-function toggleTask(element)
+function toggleTask(el)
 {
-element.classList.toggle("completed")
+el.classList.toggle("completed")
+confetti()
+saveTasks()
 updateProgress()
 }
 
 function deleteTask(btn)
 {
-btn.parentElement.parentElement.remove()
+btn.parentElement.remove()
+saveTasks()
 updateProgress()
 }
 
 function editTask(btn)
 {
-let span=btn.parentElement.parentElement.querySelector("span")
+let p=btn.parentElement.querySelector("p")
+let newText=prompt("Edit task",p.innerText)
+if(newText) p.innerText=newText
+saveTasks()
+}
 
-let newText=prompt("Edit task",span.innerText)
+function searchTask()
+{
+let input=document.getElementById("search").value.toLowerCase()
 
-if(newText)
-span.innerText=newText
+document.querySelectorAll(".task").forEach(task=>{
+task.style.display=task.innerText.toLowerCase().includes(input)?"block":"none"
+})
 }
 
 function filterTasks(type)
 {
-let tasks=document.querySelectorAll("li")
+document.querySelectorAll(".task").forEach(task=>{
 
-tasks.forEach(task=>
-{
-if(type==="all")
-task.style.display="block"
+let done=task.querySelector("p").classList.contains("completed")
 
-else if(type==="completed")
-task.style.display=task.querySelector("span").classList.contains("completed")?"block":"none"
+if(type==="all") task.style.display="block"
+else if(type==="done") task.style.display=done?"block":"none"
+else task.style.display=!done?"block":"none"
 
-else
-task.style.display=!task.querySelector("span").classList.contains("completed")?"block":"none"
 })
+}
+
+function clearTasks()
+{
+if(confirm("Delete all tasks?"))
+{
+board.innerHTML=""
+saveTasks()
+updateProgress()
+}
 }
 
 function updateProgress()
 {
-let tasks=document.querySelectorAll("li")
-let completed=document.querySelectorAll(".completed")
+let total=document.querySelectorAll(".task").length
+let done=document.querySelectorAll(".completed").length
 
-let percent=0
-
-if(tasks.length>0)
-percent=(completed.length/tasks.length)*100
+let percent= total? done/total*100 :0
 
 document.getElementById("progressBar").style.width=percent+"%"
 }
@@ -312,6 +314,42 @@ document.getElementById("progressBar").style.width=percent+"%"
 function toggleTheme()
 {
 document.body.classList.toggle("dark")
+}
+
+function saveTasks()
+{
+localStorage.setItem("tasks",board.innerHTML)
+}
+
+window.onload=function()
+{
+let data=localStorage.getItem("tasks")
+if(data) board.innerHTML=data
+updateProgress()
+}
+
+function confetti()
+{
+for(let i=0;i<15;i++)
+{
+let c=document.createElement("div")
+c.style.position="fixed"
+c.style.width="6px"
+c.style.height="6px"
+c.style.background="hsl("+Math.random()*360+"deg,100%,50%)"
+c.style.left=Math.random()*100+"vw"
+c.style.top="0"
+document.body.appendChild(c)
+
+let fall=setInterval(()=>{
+c.style.top=parseInt(c.style.top)+5+"px"
+if(parseInt(c.style.top)>window.innerHeight)
+{
+c.remove()
+clearInterval(fall)
+}
+},20)
+}
 }
 
 </script>
@@ -322,9 +360,10 @@ document.body.classList.toggle("dark")
 ```
 
 ## OUTPUT
-<img width="1897" height="1027" alt="Screenshot 2026-03-10 102823" src="https://github.com/user-attachments/assets/1e4d7728-88d4-436f-ba65-5f433566f841" />
+<img width="1918" height="1028" alt="image" src="https://github.com/user-attachments/assets/0d625452-e0a3-4ba2-b0a8-785481651259" />
 
-<img width="1893" height="1022" alt="Screenshot 2026-03-10 102846" src="https://github.com/user-attachments/assets/e4b0a44e-4ec0-4e49-940b-c896f191ac73" />
+<img width="1918" height="1028" alt="image" src="https://github.com/user-attachments/assets/b0160ea4-12f0-4ac3-b846-1f142b765228" />
+
 
 ## RESULT
 The program for creating To-do list using JavaScript is executed successfully.
